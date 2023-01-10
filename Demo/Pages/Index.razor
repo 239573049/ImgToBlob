@@ -1,0 +1,19 @@
+﻿@page "/"
+@inject IJSRuntime JS
+
+<img src="@url" height="200px" width="200"/>
+
+@code
+{
+    private string url;
+    protected override async Task OnInitializedAsync()
+    {
+        // 放在项目目录下的logo.png会被打包到cache文件夹中
+        var logo = Path.Combine(FileSystem.CacheDirectory, "logo.png");
+        // 读取转换byte[]
+        var data = await File.ReadAllBytesAsync(logo);
+        // 通过js转换blob链接
+        url = await JS.InvokeAsync<string>("imgToLink", data);
+        await base.OnInitializedAsync();
+    }
+}
